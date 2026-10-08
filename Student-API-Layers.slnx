@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="API Busness Layer/API_Busness_Layer.csproj" Id="1f6f0d7b-71b1-4c50-87d1-bb3145f8d450" />
+  <Project Path="API_Data_LAyer/API_Data_LAyer.csproj" Id="4679c3e6-3a10-4ad9-ab64-176be86da9ca" />
+  <Project Path="TestAPI/TestAPI.csproj" />
+</Solution>
