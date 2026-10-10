@@ -1,0 +1,11 @@
+[
+  {
+    "Name": "TestAPI - Swagger",
+    "Projects": [
+      {
+        "Path": "TestAPI\\TestAPI.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

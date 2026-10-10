@@ -21,3 +21,8 @@ dotnet run --project .\TestAPI\TestAPI.csproj
 ```
 
 Keep real credentials out of source control. Use a local environment variable or .NET user secrets for development.
+
+## Run from Visual Studio
+
+Choose **TestAPI - Swagger** from the startup profile dropdown, then press **F5**. This starts the TestAPI project using its HTTP launch profile, sets ASPNETCORE_ENVIRONMENT=Development, and opens /swagger in your browser.
+
