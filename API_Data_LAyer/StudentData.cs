@@ -21,7 +21,10 @@ namespace API_Data_LAyer
 
     public class StudentData
     {
-        public static string ConnectionString = "Server=.;Database=StudentsDB;User Id=sa;Password=123456;TrustServerCertificate=True;";
+        // Configure locally with the STUDENTS_DB_CONNECTION environment variable.
+        public static string ConnectionString = Environment.GetEnvironmentVariable("STUDENTS_DB_CONNECTION")
+            ?? throw new InvalidOperationException(
+                "Set the STUDENTS_DB_CONNECTION environment variable before using the student data layer.");
 
         static public List<StudentDTO> Get_All_Student()
         {

@@ -9,9 +9,13 @@ A .NET Web API organized into three projects:
 ## Requirements
 
 - .NET 10 SDK
-- SQL Server with the `StudentsDB` database and stored procedures used by `StudentData`
+- SQL Server
 
-## Configure the database
+## Create the database
+
+Run [`Database/StudentsDB-setup.sql`](Database/StudentsDB-setup.sql) in SQL Server Management Studio. It creates the `StudentsDB` database, the `Students` table, the stored procedures used by the API, and five synthetic sample rows. It contains no real student records.
+
+## Configure the connection
 
 Set `STUDENTS_DB_CONNECTION` to your SQL Server connection string before running the API. For example, in PowerShell:
 
@@ -21,6 +25,8 @@ dotnet run --project .\TestAPI\TestAPI.csproj
 ```
 
 Keep real credentials out of source control. Use a local environment variable or .NET user secrets for development.
+
+The data layer requires this environment variable and does not contain a database password.
 
 ## Run from Visual Studio
 
