@@ -1,4 +1,4 @@
-﻿using API_Busness_Layer;
+using API_Busness_Layer;
 using API_Data_LAyer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -77,7 +77,7 @@ namespace TestAPI.Controllers
             {
                 return BadRequest("The Data IS Wrong");
             }
-            API_Busness_Layer.CLS_Student Add_student = new API_Busness_Layer.CLS_Student(new StudentDTO(NewStudent.id,NewStudent.Name,NewStudent.gride), CLS_Student.ENmode.ADD_New);
+            API_Busness_Layer.CLS_Student Add_student = new API_Busness_Layer.CLS_Student(NewStudent, CLS_Student.ENmode.ADD_New);
             Add_student.save();
             NewStudent.id = Add_student.id;
 
@@ -94,33 +94,95 @@ namespace TestAPI.Controllers
             {
                 return BadRequest("the id is wrong");
             }
-            var delet = Student_List.student_list.FirstOrDefault(s => s.id == ID);
-            if (delet == null)
+            if (API_Busness_Layer.CLS_Student.DeLete_Student(ID))
             {
-                return NotFound("The Student not found");
+                return Ok($"the Student with ID {ID} deleted succefully");
             }
-            Student_List.student_list.Remove(delet);
-            return Ok("the student deleted succsefully");
+            else
+            {
+                return NotFound("The student is not found");
+            }
         }
         [HttpPut("{StudentID}",Name = "Update_Student")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<Student>Update_Student(int StudentID ,Student student)
+        public ActionResult<StudentDTO>Update_Student(int StudentID ,StudentDTO student)
         {
-            if(StudentID < 1 || student.name == ""|| student == null)
+            if(StudentID < 1 || student.Name == ""|| student == null)
             {
                 return BadRequest("invalid data");
             }
-            var update = Student_List.student_list.FirstOrDefault(student => student.id == StudentID);
-            if(update == null)
+
+            API_Busness_Layer.CLS_Student New_Update = API_Busness_Layer.CLS_Student.Student_By_ID(StudentID);
+            if(New_Update == null)
             {
                 return NotFound("the student not found");
             }
-            update.name = student.name;
-            update.gride = student.gride;
+            New_Update.name = student.Name;
+            New_Update.grade = student.gride;
+            New_Update.save();
             return Ok("the student updated succefully");
         }
 
+        [HttpPost("Upload_Image")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult>Upload_Image(IFormFile Image_File)
+        {
+            if(Image_File == null || Image_File.Length == 0)
+            {
+                return BadRequest("Pleas upload The Image");
+            }
+            var Upload_diriction = "D:\\Image_Test";
+            var file_Name = Guid.NewGuid().ToString() + Path.GetExtension(Image_File.FileName);
+            var File_Path = Path.Combine(Upload_diriction, file_Name);
+
+            if (!Directory.Exists(Upload_diriction))
+            {
+                Directory.CreateDirectory(File_Path);
+            }
+
+            using (var Final = new FileStream(File_Path, FileMode.Create))
+            {
+                await Image_File.CopyToAsync(Final);
+            }
+            return Ok(new { File_Path });
+        }
+        [HttpGet("Get_Image")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType (StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult Get_Image(string File_Name)
+        {
+            if(File_Name == null || File_Name.Length == 0)
+            {
+                return BadRequest("PLease upload the Image Name");
+            }
+            var Image_Diricyion = "D:\\Image_Test";
+            var Image_Path = Path.Combine(Image_Diricyion, File_Name);
+
+            if (!System.IO.File.Exists(Image_Path))
+            {
+                return NotFound("There isn't any Image Whith that Name");
+            }
+
+            var Image = System.IO.File.OpenRead(Image_Path);
+            var Mime_Type = mimeType(Image_Path);
+
+            return File(Image, Mime_Type);
+        }
+
+        private string mimeType(string Image_Path)
+        {
+            var END = Path.GetExtension(Image_Path).ToLowerInvariant();
+            return END switch
+            {
+                ".jpg" or ".jpeg" => "image/jpeg",
+                ".png" => "image/png",
+                ".gif" => "image/gif",
+                _ => "application/octet-stream",
+            };
+        }
     }
 }

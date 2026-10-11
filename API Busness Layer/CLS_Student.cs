@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Reflection.Metadata.Ecma335;
+using System.Runtime.CompilerServices;
 
 namespace API_Busness_Layer
 {
@@ -24,7 +25,7 @@ namespace API_Busness_Layer
             this.name = sDTO.Name;
             this.grade = sDTO.gride;
 
-            this.mode = eNmode;
+            mode = eNmode;
         }
 
         private bool _ADD_Student()
@@ -58,6 +59,15 @@ namespace API_Busness_Layer
             }
         }
 
+        private bool Update_Student()
+        {
+            return StudentData.Uodate_Student(DTOstudent);
+        }
+        static public bool DeLete_Student(int ID)
+        {
+            return StudentData.Delete_Student(ID);
+        }
+
          public bool save()
         {
             switch (mode)
@@ -72,7 +82,8 @@ namespace API_Busness_Layer
                     {
                         return false;
                     }
-                    
+                 case ENmode.Update:
+                     return Update_Student();
                 
                 
                 default: return false;

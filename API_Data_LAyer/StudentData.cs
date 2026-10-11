@@ -131,6 +131,7 @@ namespace API_Data_LAyer
             {
                 using (SqlCommand command = new SqlCommand("SP_AddStudent",conn))
                 {
+
                     command.CommandType= CommandType.StoredProcedure;
                     command.Parameters.AddWithValue("@Name", New_Student.Name);
                     command.Parameters.AddWithValue("@Grade", New_Student.gride);
@@ -145,6 +146,48 @@ namespace API_Data_LAyer
                     command.ExecuteNonQuery();
 
                     return (int)ID.Value; 
+                }
+            }
+        }
+
+        static public bool Uodate_Student(StudentDTO New_Update)
+        {
+            using (SqlConnection connection = new SqlConnection(ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand("SP_UpdateStudent", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@Name", New_Update.Name);
+                    command.Parameters.AddWithValue("@Grade" , New_Update.gride);
+                    command.Parameters.AddWithValue("@StudentId", New_Update.id);
+
+                    connection.Open();
+                    command.ExecuteNonQuery();
+
+                    return true;
+                }
+            }
+        }
+
+        static public bool Delete_Student(int ID)
+        {
+            int rows = 0;
+            using (SqlConnection connection= new SqlConnection(ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand("SP_DeleteStudent", connection))
+                {
+                    command.CommandType=CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@StudentId", ID);
+                    connection.Open();
+                    rows = (int)command.ExecuteScalar();
+                    if(rows > 0)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
                 }
             }
         }
